@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Military Studies Practice Test</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a11;
+    color: #e0e0e8;
+    font-family: 'Source Sans Pro', 'Georgia', serif;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 600px; margin: 0 auto; padding: 28px 20px; }
+
+  /* ===== HOME ===== */
+  .home-header { text-align: center; margin-bottom: 36px; }
+  .home-label {
+    font-size: 10px; letter-spacing: 6px; text-transform: uppercase;
+    color: #555; margin-bottom: 10px;
+  }
+  .home-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 32px; font-weight: 400; line-height: 1.25; color: #f0f0f5;
+  }
+  .home-divider {
+    width: 60px; height: 2px; margin: 18px auto;
+    background: linear-gradient(90deg, #4a9eff, #ff6aaa, #7adf4a);
+  }
+  .home-sub { color: #777; font-size: 14px; }
+
+  .btn-all {
+    width: 100%; padding: 18px 24px;
+    background: linear-gradient(135deg, rgba(74,158,255,0.08), rgba(255,106,170,0.08), rgba(122,223,74,0.08));
+    border: 1px solid rgba(74,158,255,0.27); border-radius: 14px;
+    color: #f0f0f5; font-size: 17px; font-family: inherit;
+    cursor: pointer; margin-bottom: 32px; transition: border-color 0.2s;
+  }
+  .btn-all:hover { border-color: rgba(74,158,255,0.55); }
+
+  .guide-section { margin-bottom: 24px; }
+  .guide-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .guide-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
+  .guide-btn {
+    border-radius: 8px; font-size: 12px; font-family: inherit;
+    cursor: pointer; padding: 6px 14px; transition: border-color 0.2s;
+  }
+  .guide-btn:hover { filter: brightness(1.3); }
+
+  /* ===== TEST ===== */
+  .test-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .btn-back {
+    background: none; border: none; color: #555; font-size: 14px;
+    font-family: inherit; cursor: pointer; padding: 4px 0;
+  }
+  .btn-back:hover { color: #999; }
+  .progress-num { font-size: 12px; color: #444; }
+
+  .progress-bar { height: 3px; background: #14141e; border-radius: 2px; margin-bottom: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #4a9eff, #7abfff); border-radius: 2px; transition: width 0.4s ease; }
+
+  .score-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 24px; }
+  .score-correct { color: #4adf8a; }
+  .score-wrong { color: #ff6a6a; }
+
+  .question-text { font-family: 'Playfair Display', Georgia, serif; font-size: 18px; line-height: 1.5; margin-bottom: 24px; color: #f0f0f5; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+  .opt-btn {
+    padding: 15px 18px; background: #101018; border: 1px solid #1e1e28;
+    border-radius: 11px; color: #ccc; font-size: 15px; font-family: inherit;
+    cursor: pointer; text-align: left; line-height: 1.45;
+    transition: all 0.15s; display: flex; align-items: flex-start; gap: 12px;
+  }
+  .opt-btn:hover:not(.answered) { border-color: #4a9eff44; background: #4a9eff08; }
+  .opt-btn.selected { background: rgba(74,158,255,0.07); border-color: rgba(74,158,255,0.35); color: #7abfff; }
+  .opt-btn.correct { background: rgba(74,223,138,0.07); border-color: rgba(74,223,138,0.35); color: #6aefa0; }
+  .opt-btn.wrong { background: rgba(255,106,106,0.07); border-color: rgba(255,106,106,0.35); color: #ff8a8a; }
+  .opt-btn.dimmed { color: #555; }
+  .opt-btn.answered { cursor: default; }
+
+  .opt-circle {
+    min-width: 24px; height: 24px; border-radius: 50%;
+    border: 1px solid #1e1e28; display: flex; align-items: center;
+    justify-content: center; font-size: 12px; flex-shrink: 0;
+  }
+  .opt-circle.selected-circle { background: rgba(74,158,255,0.13); }
+  .opt-circle.correct-circle { background: rgba(74,223,138,0.13); }
+  .opt-circle.wrong-circle { background: rgba(255,106,106,0.13); }
+
+  .submit-btn {
+    width: 100%; padding: 16px; border-radius: 12px;
+    font-size: 16px; font-family: inherit; cursor: pointer; transition: all 0.2s;
+  }
+  .submit-btn.active {
+    background: rgba(74,158,255,0.1); border: 1px solid rgba(74,158,255,0.35); color: #7abfff;
+  }
+  .submit-btn.active:hover { border-color: rgba(74,158,255,0.6); }
+  .submit-btn.disabled {
+    background: #0a0a11; border: 1px solid #1a1a24; color: #333; cursor: default;
+  }
+
+  /* ===== RESULTS ===== */
+  .results { text-align: center; padding-top: 60px; }
+  .results-pct {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 64px; font-weight: 300; margin-bottom: 4px;
+  }
+  .results-pct.high { color: #4adf8a; }
+  .results-pct.mid { color: #ffaa4a; }
+  .results-pct.low { color: #ff6a6a; }
+  .results-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #555; margin-bottom: 6px; }
+  .results-stats { font-size: 14px; color: #666; margin-bottom: 32px; }
+
+  .result-btn {
+    padding: 15px 32px; border-radius: 12px; font-size: 15px;
+    font-family: inherit; cursor: pointer; margin-bottom: 10px; width: 100%;
+    transition: all 0.2s;
+  }
+  .result-btn.review { background: rgba(255,106,106,0.08); border: 1px solid rgba(255,106,106,0.25); color: #ff8a8a; }
+  .result-btn.retake { background: rgba(74,158,255,0.08); border: 1px solid rgba(74,158,255,0.25); color: #7abfff; }
+  .result-btn.menu { background: transparent; border: 1px solid #22222a; color: #777; }
+
+  /* ===== REVIEW ===== */
+  .review-card {
+    background: #101018; border: 1px solid #1e1e28;
+    border-radius: 14px; padding: 28px 24px; margin-bottom: 16px;
+  }
+  .review-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #ff6a6a; margin-bottom: 14px; }
+  .review-q { font-family: 'Playfair Display', Georgia, serif; font-size: 17px; line-height: 1.5; margin-bottom: 24px; }
+  .review-opt {
+    padding: 14px 16px; border-radius: 10px; margin-bottom: 8px;
+    font-size: 15px; line-height: 1.45; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .review-opt.r-correct { background: rgba(74,223,138,0.07); border: 1px solid rgba(74,223,138,0.27); color: #6aefa0; }
+  .review-opt.r-wrong { background: rgba(255,106,106,0.07); border: 1px solid rgba(255,106,106,0.27); color: #ff8a8a; }
+  .review-opt.r-neutral { background: #0a0a11; border: 1px solid #1a1a24; color: #555; }
+  .review-mark { min-width: 20px; text-align: center; }
+
+  .nav-row { display: flex; gap: 10px; }
+  .nav-btn {
+    flex: 1; padding: 14px; border-radius: 10px;
+    font-size: 15px; font-family: inherit; cursor: pointer;
+  }
+  .nav-btn.nav-prev { background: #1a1a24; border: 1px solid #22222e; color: #999; }
+  .nav-btn.nav-next { background: rgba(74,158,255,0.08); border: 1px solid rgba(74,158,255,0.27); color: #7abfff; }
+  .nav-btn:disabled { background: #0a0a11; border: 1px solid #1a1a24; color: #333; cursor: default; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+// ===== QUESTION DATA =====
+const TESTS = {
+  "Joint Forces & Core Missions": [
+    { q: "What is Joint Interorganizational Coordination?", opts: ["Coordination and cooperation toward common objectives", "Cooperation, coordination, and integration of governmental and nongovernmental entities with military operations to achieve unified action", "An agency the U.S. military works with in a specific operation", "A person or entity affected by actions of the U.S. military"], ans: 1 },
+    { q: "What is Unity of Effort?", opts: ["Integration of governmental entities with military operations", "A single commander directing all forces", "Coordination and cooperation toward common objectives, even if participants are not part of the same command — the product of successful unified action", "An agreement between mission partners to advance mutual interests"], ans: 2 },
+    { q: "What is a Stakeholder?", opts: ["An agency that works with the military based on a willing arrangement", "A person, organization, or entity who affects or can be affected by actions of the U.S. military — does not necessarily share goals with USG or DOD", "A military commander with operational control", "A governmental entity coordinating with military operations"], ans: 1 },
+    { q: "What is a Mission Partner?", opts: ["A person affected by U.S. military actions", "A subordinate unified command", "Any enlisted member of the joint force", "An agency or external organization the U.S. military works with in a specific situation, based on an agreement to advance mutual interests"], ans: 3 },
+    { q: "Which is NOT a primary role of non-commissioned and petty officers in joint operations?", opts: ["To lead and manage enlisted personnel", "To decide punishments for those in trouble", "To plan and execute joint missions", "To advise and assist senior officers"], ans: 1 },
+    { q: "What are the Air Force Core Values?", opts: ["Honor, Courage, Commitment", "Loyalty, Duty, Respect", "Integrity First, Service Before Self, Excellence in All We Do", "Honor, Respect, Devotion to Duty"], ans: 2 },
+    { q: "What are the Army's 7 Core Values (LDRSHIP)?", opts: ["Loyalty, Duty, Respect, Selfless Service, Honor, Integrity, Personal Courage", "Loyalty, Discipline, Respect, Service, Honor, Initiative, Perseverance", "Leadership, Duty, Resilience, Sacrifice, Honor, Integrity, Patience", "Loyalty, Dedication, Respect, Selflessness, Honesty, Integrity, Pride"], ans: 0 },
+    { q: "Which branches share the same core values of Honor, Courage, and Commitment?", opts: ["Army and Air Force", "Navy and Coast Guard", "Marine Corps and Navy", "Air Force and Space Force"], ans: 2 },
+    { q: "What are the Coast Guard's Core Values?", opts: ["Honor, Courage, Commitment", "Integrity First, Service Before Self, Excellence in All We Do", "Honor, Respect, Devotion to Duty", "Loyalty, Duty, Respect"], ans: 2 },
+    { q: "What does the Air and Space Superiority core mission provide?", opts: ["Access to reliable communications and information networks", "Situational awareness and necessary information to decision makers", "Control of the air domain, crucial to modern warfare, guaranteeing availability of other core missions", "Ability to project military power more rapidly and flexibly"], ans: 2 },
+    { q: "What does the ISR core mission provide?", opts: ["Control of the air domain", "Situational awareness and necessary information to decision makers", "Swift deployment to anywhere on the earth", "Access to reliable communications networks"], ans: 1 },
+    { q: "What does the Rapid Global Mobility core mission do?", opts: ["Projects military power more rapidly and with a lighter footprint", "Provides reliable communications for joint operations", "Quickly projects air power to anywhere on the face of the earth, providing swift deployment and ability to sustain operations", "Provides situational awareness to decision makers"], ans: 2 },
+    { q: "What does the Global Strike core mission involve?", opts: ["Quickly projecting air power anywhere on the earth", "The ability to project military power more rapidly, more flexibly, and with a lighter footprint than other options", "Controlling the air domain for modern warfare", "Providing communications and information networks"], ans: 1 },
+    { q: "What does the Command and Control (C2) core mission provide?", opts: ["Control of the air domain", "Swift deployment capabilities", "Situational awareness for decision makers", "Access to reliable communications and information networks for joint operations"], ans: 3 },
+    { q: "What are The Federalist Papers?", opts: ["The first ten amendments to the Constitution", "A document announcing separation from Great Britain", "A collection of essays by Jay, Madison, and Hamilton in 1788 urging ratification of the Constitution", "The first constitution of the United States"], ans: 2 },
+    { q: "What are The Articles of Confederation?", opts: ["Essays urging ratification of the Constitution", "The first constitution of the United States, establishing the national government after the Revolution", "The first ten amendments to the Constitution", "A declaration of separation from Great Britain"], ans: 1 },
+    { q: "What is The Bill of Rights?", opts: ["A collection of essays by the Founding Fathers", "A document announcing colonial independence", "The first constitution of the United States", "The first ten amendments to the Constitution, guaranteeing rights and freedoms of the people"], ans: 3 },
+    { q: "When was The Declaration of Independence adopted?", opts: ["1788", "July 4, 1776", "1791", "1787"], ans: 1 },
+    { q: "In the Oath of Enlistment, what do you swear to support and defend?", opts: ["The flag of the United States", "The President of the United States", "The Constitution of the United States", "The Department of Defense"], ans: 2 },
+    { q: "In the Oath, you swear to obey the orders of whom?", opts: ["The Secretary of Defense and senior NCOs", "The President and the officers appointed over you", "The Joint Chiefs of Staff", "Your commanding officer only"], ans: 1 },
+  ],
+  "NMO & NDS": [
+    { q: "Which instrument of national power involves providing foreign aid to a partner nation?", opts: ["Military", "Economic", "Diplomatic", "Information"], ans: 2 },
+    { q: "Which instrument involves deploying armed forces for defense, humanitarian missions, or peacekeeping?", opts: ["Diplomatic", "Military", "Law Enforcement", "Financial"], ans: 1 },
+    { q: "Which instrument involves using media and social media to influence public opinion?", opts: ["Intelligence", "Diplomatic", "Information", "Economic"], ans: 2 },
+    { q: "Which instrument involves developing and maintaining a strong economy?", opts: ["Financial", "Diplomatic", "Military", "Economic"], ans: 3 },
+    { q: "Which instrument involves denying individuals or groups access to funding sources?", opts: ["Economic", "Law Enforcement", "Financial", "Intelligence"], ans: 2 },
+    { q: "Which instrument involves collecting information on a terrorist network?", opts: ["Information", "Military", "Law Enforcement", "Intelligence"], ans: 3 },
+    { q: "Which instrument involves a government agency arresting criminals and terrorists?", opts: ["Military", "Intelligence", "Financial", "Law Enforcement"], ans: 3 },
+    { q: "The strategic, operational, or tactical purpose of employment depends on the nature of the ___?", opts: ["Mission", "Conflict", "Weapon system", "Commander's intent"], ans: 0 },
+    { q: "What is Conventional Warfare?", opts: ["Guerrilla tactics, subversion, or sabotage", "Traditional military operations between nation-states or armed groups using non-nuclear weapons", "Integration of national policy decisions into military strategies", "Conduct of battles to achieve objectives assigned to subordinate units"], ans: 1 },
+    { q: "What is Irregular Warfare?", opts: ["Traditional military operations between nation-states", "The realm of Combatant Commanders focused on operational art", "A type of conflict where the rules are always changing, involving guerrilla tactics, subversion, or sabotage", "Integration of national policy into defense strategies"], ans: 2 },
+    { q: "What does the Strategic level of war do?", opts: ["Conducts battles and engagements for military objectives", "Focuses on the application of operational art", "Integrates national policy decisions into national, defense, and military strategies", "Involves guerrilla tactics and subversion"], ans: 2 },
+    { q: "What is the focus of the Operational level of war?", opts: ["Integrating national policy decisions", "Conducting tactical battles", "The realm of Combatant Commanders — the application of operational art", "Traditional operations between nation-states"], ans: 2 },
+    { q: "What was established in 1947 to coordinate and oversee national security?", opts: ["The Department of Defense", "The Joint Chiefs of Staff", "The National Security Council (NSC)", "The Central Intelligence Agency"], ans: 2 },
+    { q: "Who is the principal assistant to the President in all DOD matters?", opts: ["Chairman of the Joint Chiefs of Staff", "Secretary of State", "National Security Advisor", "Secretary of Defense (SecDef)"], ans: 3 },
+    { q: "The Operational chain of command runs from the President through SecDef to whom?", opts: ["Secretaries of the Military Departments", "Service Chiefs", "Combatant Commanders", "The Joint Chiefs of Staff"], ans: 2 },
+    { q: "The Administrative chain of command runs from the President through SecDef to whom?", opts: ["Combatant Commanders", "Secretaries of the Military Departments", "Theater commanders", "The Chairman of the Joint Chiefs"], ans: 1 },
+    { q: "What is a Combatant Command?", opts: ["A temporary task force for a limited objective", "A command with a broad continuing mission under a single commander, composed of two or more Military Departments, established by the President", "A command assigned a geographic AOR", "A structure where one branch has operational control over its forces"], ans: 1 },
+    { q: "What is a Joint Task Force?", opts: ["Established to conduct continuing operations like a unified command", "Operates worldwide across geographic boundaries", "May be established on a geographic or functional basis for a specific limited objective without centralized control of logistics", "A command with a broad continuing mission under a single commander"], ans: 2 },
+    { q: "What does a Geographic Combatant Command have?", opts: ["Worldwide transregional responsibilities", "An assigned geographic Area of Responsibility (AOR)", "A specific limited objective", "Operational control over a single branch"], ans: 1 },
+    { q: "Which are the four Functional Combatant Commands with transregional responsibilities?", opts: ["NORTHCOM, EUCOM, CENTCOM, INDOPACOM", "CYBERCOM, SOCOM, STRATCOM, TRANSCOM", "AFRICOM, SOUTHCOM, NORTHCOM, EUCOM", "SOCOM, CENTCOM, CYBERCOM, AFRICOM"], ans: 1 },
+    { q: "The Air Force achieves superiority across all domains through the application of ___?", opts: ["Technology", "Joint operations", "Airpower", "Strategic deterrence"], ans: 2 },
+    { q: "The Marine Corps seizes or defends what for the fleet?", opts: ["Forward operating bases", "Advanced naval bases", "Strategic airfields", "Coastal defense positions"], ans: 1 },
+    { q: "The Navy keeps the ___ open and free.", opts: ["Airspace", "Borders", "Seas", "Trade routes"], ans: 2 },
+    { q: "The National Guard has a dual mission consisting of what two roles?", opts: ["Offensive and defensive", "Active and reserve", "Federal and state", "Domestic and international"], ans: 2 },
+    { q: "The Coast Guard is organized under what department?", opts: ["Department of Defense", "Department of the Navy", "Department of Homeland Security", "Department of Transportation"], ans: 2 },
+    { q: "The Space Force provides Guardians to conduct what?", opts: ["Cyber defense operations", "Global space operations", "Strategic nuclear deterrence", "Orbital combat missions"], ans: 1 },
+    { q: "True or False: The Chairman of the Joint Chiefs of Staff has command authority.", opts: ["True", "False"], ans: 1 },
+    { q: "True or False: The Vice Chairman of the JCS is a full voting member.", opts: ["True", "False"], ans: 0 },
+    { q: "True or False: The SEAC is the second most senior enlisted member by position.", opts: ["True — second most senior", "False — the SEAC is the MOST senior enlisted member by position"], ans: 1 },
+    { q: "True or False: The Joint Staff has overlapping functions.", opts: ["True — overlapping functions", "False — unique (distinct) functions"], ans: 1 },
+    { q: "The Army's mission is to deploy, fight, and win by providing ready, prompt, and sustained ___.", opts: ["Air dominance", "Maritime superiority", "Land dominance", "Cyber operations"], ans: 2 },
+  ],
+  "Operational Concepts": [
+    { q: "What is the FIRST step of the Joint Planning Process?", opts: ["Mission Analysis", "COA Development", "Planning Initiation", "COA Approval"], ans: 2 },
+    { q: "What is the correct order of the 7 Joint Planning Process steps?", opts: ["Mission Analysis → Planning Initiation → COA Development → Wargaming → Comparison → Approval → Plan Development", "Planning Initiation → Mission Analysis → COA Development → COA Analysis & Wargaming → COA Comparison → COA Approval → Plan or Order Development", "COA Development → Mission Analysis → Planning Initiation → Wargaming → Approval → Comparison → Plan Development", "Planning Initiation → COA Development → Mission Analysis → COA Comparison → Wargaming → Approval → Plan Development"], ans: 1 },
+    { q: "What occurs during Planning Initiation?", opts: ["Analyzing the mission and identifying the desired end state", "Developing and evaluating potential courses of action", "An appropriate authority recognizes potential for military capability to be employed in support of national objectives or a crisis", "Expanding the approved COA into a detailed plan"], ans: 2 },
+    { q: "What occurs during Mission Analysis?", opts: ["Recognizing potential for military capability employment", "Analyzing the mission, identifying the desired end state, and assessing the situation", "Closely examining potential COAs through wargaming", "Briefing the commander on COA comparison results"], ans: 1 },
+    { q: "What occurs during COA Development?", opts: ["Refining and prioritizing selected courses of action", "Analyzing the mission and desired end state", "Developing and evaluating potential courses of action", "Expanding approved COA into a detailed OPORD"], ans: 2 },
+    { q: "What occurs during COA Analysis and Wargaming?", opts: ["Staff briefs the commander on comparison results", "Selected COAs are refined and prioritized", "Closely examining potential COAs using synthetic environments where people make decisions and respond to consequences", "Developing potential courses of action"], ans: 2 },
+    { q: "What occurs during COA Comparison?", opts: ["Developing and evaluating potential COAs", "Expanding the approved COA into a detailed plan", "An authority recognizes potential for military employment", "Staff briefs the commander on COA comparison and wargaming results, including supporting information"], ans: 3 },
+    { q: "What occurs during COA Approval?", opts: ["The selected courses of action are refined, prioritized, and further analyzed", "Developing potential courses of action", "Expanding the COA into a detailed OPORD", "Wargaming in a synthetic environment"], ans: 0 },
+    { q: "What occurs during Plan or Order Development?", opts: ["Analyzing the mission and end state", "Briefing wargaming results to the commander", "Recognizing potential for military employment", "Expanding the approved COA into a detailed plan or OPORD by refining the initial CONOPS"], ans: 3 },
+    { q: "What does JADO stand for?", opts: ["Joint Air Defense Operations", "Joint All-Domain Operations", "Joint Allied Defensive Objectives", "Joint Aerial Deployment Orders"], ans: 1 },
+    { q: "Success of the Department of the Air Force's ability to operate requires what?", opts: ["Air superiority in all theaters", "Convergence of effects globally across domains", "Technological superiority over adversaries", "Numerical advantage in personnel"], ans: 1 },
+    { q: "What does 'Cooperation' mean in the Competition Continuum?", opts: ["Combat is the primary means to satisfy interests", "Relationships with incompatible interests, none seeking armed conflict", "Mutually beneficial relationships with compatible interests", "Strategic deterrence through military power"], ans: 2 },
+    { q: "What does 'Competition' mean in the Competition Continuum?", opts: ["Mutually beneficial relationships", "Armed conflict between nation-states", "Relationships with incompatible interests — none seeking to escalate to armed conflict", "Full-scale military operations"], ans: 2 },
+    { q: "What does 'Armed Conflict' mean in the Competition Continuum?", opts: ["Mutually beneficial relationships with compatible interests", "Incompatible interests without escalation", "Diplomatic negotiations backed by military power", "A situation in which combat is the primary means to satisfy interests"], ans: 3 },
+    { q: "Which statement is FALSE about the Competition Continuum?", opts: ["Describes how the U.S. applies instruments of national power during the world at war ONLY", "Key points are cooperation, competition, and armed conflict", "Provides for comprehensive and flexible interactions with strategic actors", "Involves strategic relations between the U.S. and other actors"], ans: 0 },
+    { q: "What operational concept employs multi-capable Airmen and supports JADO's goal?", opts: ["Distributed Maritime Operations", "Multi-Domain Operations", "Agile Combat Employment (ACE)", "Expeditionary Advanced Basing Operations"], ans: 2 },
+    { q: "What is the best example of Mission Command?", opts: ["A commander allowing operations without any oversight or guidelines", "A squadron commander providing intent clearly and empowering competent and flexible leaders", "A commander providing detailed instructions with no room for input or judgment", "Giving an order without a timeline and saying 'just figure it out'"], ans: 1 },
+    { q: "Which Mission Command principle provides a clear and concise statement framing the operation's purpose and desired end?", opts: ["Mutual Trust", "Disciplined Initiative", "Commander's Intent", "Mission-Type Orders"], ans: 2 },
+    { q: "What is Agile Combat Employment (ACE)?", opts: ["A defensive posture for protecting home bases", "A proactive and reactive operational scheme of maneuver executed within threat timelines to increase resiliency and survivability while generating combat power", "A training program for multi-capable airmen only", "A logistics system for distributing supplies"], ans: 1 },
+    { q: "What are Mission Ready Airmen (similar to Multi-Capable Airmen)?", opts: ["Officers trained in strategic planning only", "Airmen who specialize in a single career field", "Trained in expeditionary skills, capable of diverse tasks, often as a cross-functional team to support ACE force elements", "Personnel assigned to permanent bases only"], ans: 2 },
+    { q: "What are Conditions Based Authorities?", opts: ["Standing orders that apply at all times", "A published set of authorities delegated down the chain of command, activated only when specified conditions are met", "Emergency powers granted during armed conflict only", "Authorities given to NCOs for disciplinary actions"], ans: 1 },
+    { q: "What is the Goal of Agile Combat Employment?", opts: ["To establish permanent forward bases", "To reduce the number of personnel deployed", "To complicate or negate adversary responses by complicating the enemy's targeting process and creating political and operational dilemmas", "To centralize all operations at a single location"], ans: 2 },
+    { q: "What is Mission Command?", opts: ["A rigid top-down command structure", "Detailed micromanagement of all operations", "An approach to C2 that empowers subordinate decision-making for flexibility, initiative, and responsiveness in accomplishing commander's intent", "A system where only senior officers make decisions"], ans: 2 },
+    { q: "What are the three ACE enablers?", opts: ["Air superiority, logistics, intelligence", "Multi-Capable Airmen, Tailorable Force Packages, Mission Command", "Speed, range, precision", "C2, ISR, Global Strike"], ans: 1 },
+    { q: "What challenge does ACE NOT address?", opts: ["Enemy's rapid proliferation of advances in technology", "Anti-access and area denial threats", "The pay gap between officers and enlisted", "Reduced freedom of maneuver"], ans: 2 },
+  ],
+};
+
+const ALL_QUESTIONS = Object.values(TESTS).flat();
+
+// ===== STATE =====
+let state = {
+  view: "home",
+  testName: "",
+  questions: [],
+  current: 0,
+  selected: null,
+  answered: false,
+  score: 0,
+  answers: [],
+  done: false,
+  reviewMode: false,
+  reviewIdx: 0,
+};
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startTest(name, qs) {
+  const shuffled = shuffle(qs).map(q => {
+    const indices = q.opts.map((_, i) => i);
+    const si = shuffle(indices);
+    return { ...q, displayOpts: si.map(i => q.opts[i]), correctDisplay: si.indexOf(q.ans) };
+  });
+  state = { view: "test", testName: name, questions: shuffled, current: 0, selected: null, answered: false, score: 0, answers: [], done: false, reviewMode: false, reviewIdx: 0 };
+  render();
+}
+
+function selectOpt(idx) { if (!state.answered) { state.selected = idx; render(); } }
+
+function submitAnswer() {
+  if (state.selected === null) return;
+  const correct = state.selected === state.questions[state.current].correctDisplay;
+  state.answered = true;
+  if (correct) state.score++;
+  state.answers.push({ qIdx: state.current, selected: state.selected, correct });
+  render();
+}
+
+function nextQuestion() {
+  if (state.current + 1 >= state.questions.length) { state.done = true; }
+  else { state.current++; state.selected = null; state.answered = false; }
+  render();
+}
+
+function goHome() { state.view = "home"; render(); }
+function startReview() { state.reviewMode = true; state.reviewIdx = 0; render(); }
+function reviewNav(dir) { state.reviewIdx += dir; render(); }
+
+// ===== RENDER =====
+function render() {
+  const app = document.getElementById("app");
+
+  if (state.view === "home") {
+    const entries = [
+      { name: "Joint Forces & Core Missions", count: TESTS["Joint Forces & Core Missions"].length, color: "#4a9eff" },
+      { name: "NMO & NDS", count: TESTS["NMO & NDS"].length, color: "#ff6aaa" },
+      { name: "Operational Concepts", count: TESTS["Operational Concepts"].length, color: "#7adf4a" },
+    ];
+    app.innerHTML = `
+      <div class="home-header">
+        <div class="home-label">Multiple Choice</div>
+        <h1 class="home-title">Practice Test</h1>
+        <div class="home-divider"></div>
+        <p class="home-sub">${ALL_QUESTIONS.length} total questions · 3 study guides</p>
+      </div>
+      <button class="btn-all" onclick="startTest('Full Exam', ALL_QUESTIONS)">Take Full Exam (${ALL_QUESTIONS.length} questions)</button>
+      ${entries.map(t => `
+        <div class="guide-section">
+          <div class="guide-header">
+            <div class="guide-label" style="color:${t.color}">${t.name}</div>
+            <button class="guide-btn" style="background:${t.color}15;border:1px solid ${t.color}40;color:${t.color}" onclick="startTest('${t.name}', TESTS['${t.name}'])">Start (${t.count})</button>
+          </div>
+        </div>
+      `).join("")}
+    `;
+    return;
+  }
+
+  if (state.done && state.reviewMode) {
+    const missed = state.answers.filter(a => !a.correct);
+    const item = missed[state.reviewIdx];
+    const q = state.questions[item.qIdx];
+    app.innerHTML = `
+      <div class="test-top">
+        <button class="btn-back" onclick="state.reviewMode=false;render()">← Results</button>
+        <span class="progress-num">Review ${state.reviewIdx + 1} / ${missed.length}</span>
+      </div>
+      <div class="review-card">
+        <div class="review-label">Missed</div>
+        <div class="review-q">${q.q}</div>
+        ${q.displayOpts.map((opt, i) => {
+          const isCorrect = i === q.correctDisplay;
+          const wasSelected = i === item.selected;
+          let cls = "r-neutral", mark = "";
+          if (isCorrect) { cls = "r-correct"; mark = "✓"; }
+          if (wasSelected && !isCorrect) { cls = "r-wrong"; mark = "✗"; }
+          return `<div class="review-opt ${cls}"><span class="review-mark">${mark}</span><span>${opt}</span></div>`;
+        }).join("")}
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn nav-prev" ${state.reviewIdx === 0 ? "disabled" : ""} onclick="reviewNav(-1)">Previous</button>
+        <button class="nav-btn nav-next" ${state.reviewIdx >= missed.length - 1 ? "disabled" : ""} onclick="reviewNav(1)">Next</button>
+      </div>
+    `;
+    return;
+  }
+
+  if (state.done) {
+    const pct = Math.round((state.score / state.questions.length) * 100);
+    const missed = state.answers.filter(a => !a.correct).length;
+    const pctClass = pct >= 80 ? "high" : pct >= 60 ? "mid" : "low";
+    app.innerHTML = `
+      <div class="results">
+        <div class="results-pct ${pctClass}">${pct}%</div>
+        <div class="results-label">${state.testName}</div>
+        <div class="results-stats">${state.score} correct · ${missed} missed · ${state.questions.length} total</div>
+        ${missed > 0 ? `<button class="result-btn review" onclick="startReview()">Review Missed (${missed})</button>` : ""}
+        <button class="result-btn retake" onclick="startTest('${state.testName}', ${state.testName === 'Full Exam' ? 'ALL_QUESTIONS' : "TESTS['" + state.testName + "']"})">Retake Test</button>
+        <button class="result-btn menu" onclick="goHome()">Back to Menu</button>
+      </div>
+    `;
+    return;
+  }
+
+  // TEST QUESTION
+  const q = state.questions[state.current];
+  const prog = ((state.current + (state.answered ? 1 : 0)) / state.questions.length * 100);
+  const missedSoFar = state.answers.filter(a => !a.correct).length;
+
+  app.innerHTML = `
+    <div class="test-top">
+      <button class="btn-back" onclick="goHome()">← Exit</button>
+      <span class="progress-num">${state.current + 1} / ${state.questions.length}</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div>
+    <div class="score-row">
+      <span class="score-correct">✓ ${state.score}</span>
+      <span class="score-wrong">✗ ${missedSoFar}</span>
+    </div>
+    <div class="question-text">${q.q}</div>
+    <div class="options">
+      ${q.displayOpts.map((opt, i) => {
+        let cls = "opt-btn";
+        let circCls = "opt-circle";
+        let circText = String.fromCharCode(65 + i);
+
+        if (state.answered) {
+          cls += " answered";
+          if (i === q.correctDisplay) { cls += " correct"; circCls += " correct-circle"; circText = "✓"; }
+          else if (i === state.selected) { cls += " wrong"; circCls += " wrong-circle"; circText = "✗"; }
+          else { cls += " dimmed"; }
+        } else if (i === state.selected) {
+          cls += " selected"; circCls += " selected-circle";
+        }
+
+        return `<button class="${cls}" onclick="selectOpt(${i})"><span class="${circCls}">${circText}</span><span>${opt}</span></button>`;
+      }).join("")}
+    </div>
+    ${!state.answered
+      ? `<button class="submit-btn ${state.selected !== null ? 'active' : 'disabled'}" onclick="submitAnswer()">Submit Answer</button>`
+      : `<button class="submit-btn active" onclick="nextQuestion()">${state.current + 1 >= state.questions.length ? "See Results" : "Next Question →"}</button>`
+    }
+  `;
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>
